@@ -8,6 +8,7 @@ class Game {
     }
     
     private gameLoop(){
+        
         this.level.update();      
         requestAnimationFrame(this.gameLoop.bind(this));
     }

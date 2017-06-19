@@ -10,6 +10,7 @@ class Balloon {
     public height: number;
     public speed: number = 0;
     public ammodiv: number;
+    private game: Game;
 
     public get display(): Score {
         return this.score;
@@ -18,15 +19,16 @@ class Balloon {
         this.score = value;
     }
 
-    constructor(l:Level) {
+    constructor(l:Level, g: Game, score:Score) {
         console.log("New balloon")
         this.div = document.createElement("balloon");
         l.div.appendChild(this.div);
 
+        this.score = score;
         this.level = l;
-        
-        this.x = Math.ceil(Math.random() * 8) * 110;
-        this.y = 1300;
+        this.game = g;
+        this.y = Math.ceil(Math.random() * 500) + 418;
+        this.x = -200;
         this.width = 200;
         this.height = 200;
         this.speed = Math.random() * 1 + 2; 
@@ -38,33 +40,31 @@ class Balloon {
     }
 
     public update(): void {
-        this.y -= this.speed;
-        if (this.y < 200) {
-            this.div.remove();
-            this.level.removeBalloon(this);
-        }
+        this.x += this.speed;
+        if (this.x > 1300) {
+            this.score.updateScore(0, 0, -1);   
+            this.remove();
+        } else {
         this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
-    }
+        }
+}
 
     private onClick(e:MouseEvent):void {
-        // als er nog geen gun is, dan aanmaken
-        console.log("This balloon is shot");
+        
+        console.log("This balloon is Popped");
+        this.score.updateScore(1, -1, 0);
+        this.remove();
 
-        if (this.level.display.ammo > 0){
-            this.ammodiv -= 1;
-            this.level.display.updateScore(+1, -1);
-            this.div.remove();
-        }
-        else { //Geen Ammo, reload
-            this.ammodiv = 6;
-            this.level.display.updateScore(+6, 0);
-        }
+    }
 
-        // optioneel: listener weghalen
+    public remove() : void {
+        this.div.remove();        
+        this.div.removeEventListener("click", (e:MouseEvent) => this.onClick(e));
+        this.div.removeEventListener('keydown', this.keyboardInput);
+        this.div = undefined;
+        this.level.removeBalloon(this);
     }
-    public remove() {
-        this.div.remove();
-    }
+    
     private keyboardInput(event: KeyboardEvent) {
         if (event.keyCode == 82) {
             console.log("R is pressed, reloading...");
