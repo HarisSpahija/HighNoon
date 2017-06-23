@@ -81,12 +81,25 @@ balloon {
     /*animation: balloonup 3s linear infinite;*/
 }
 
-@keyframes balloonup {
-  0% {
-    transform: translateY(100vh);
-  }
-  
-  100% {
-    transform: translateY(0vh);
-  }
+balloonhitbox {
+    border:2px solid blue;
+    left: 59px;
+    top: 17px;
+    height: 80px; width: 80px;
+}
+
+gun {
+    background-image: url('../images/gunshoot.gif');
+    background-size:cover;
+    
+    width:200px; height:200px;
+    top: calc(75%);
+    left: 500px;
+}
+
+gunhitbox {
+    border:2px solid red;
+    left: 30px;
+    height:800px; width:120px;
+    margin-top:-500px;
 }

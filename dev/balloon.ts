@@ -2,15 +2,18 @@ class Balloon {
     
     private level:Level;
     private score:Score;
+    private game: Game;
     
     public div: HTMLElement;
+    public hitbox: HTMLElement;
+    
     public x: number;
     public y: number;
     public width: number;
     public height: number;
     public speed: number = 0;
     public ammodiv: number;
-    private game: Game;
+    
 
     public get display(): Score {
         return this.score;
@@ -24,6 +27,11 @@ class Balloon {
         this.div = document.createElement("balloon");
         l.div.appendChild(this.div);
 
+        this.hitbox = document.createElement("balloonhitbox");
+        this.div.appendChild(this.hitbox);
+
+
+
         this.score = score;
         this.level = l;
         this.game = g;
@@ -35,34 +43,30 @@ class Balloon {
         this.setColor(); 
         this.update();
 
-        this.div.addEventListener("click", (e:MouseEvent) => this.onClick(e));
+        // this.div.addEventListener("click", (e:MouseEvent) => this.onClick(e));
         this.div.addEventListener('keydown', this.keyboardInput);
+
     }
 
     public update(): void {
         this.x += this.speed;
-        if (this.x > 1300) {
-            this.score.updateScore(0, 0, -1);   
-            this.remove();
-        } else {
         this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
-        }
+        
 }
 
-    private onClick(e:MouseEvent):void {
+    // private onClick(e:MouseEvent):void {
         
-        console.log("This balloon is Popped");
-        this.score.updateScore(1, -1, 0);
-        this.remove();
+    //     console.log("This balloon is Popped");
+    //     this.score.updateScore(1, -1, 0);
+    //     this.remove();
 
-    }
+    // }
 
     public remove() : void {
         this.div.remove();        
-        this.div.removeEventListener("click", (e:MouseEvent) => this.onClick(e));
+        // this.div.removeEventListener("click", (e:MouseEvent) => this.onClick(e));
         this.div.removeEventListener('keydown', this.keyboardInput);
         this.div = undefined;
-        this.level.removeBalloon(this);
     }
     
     private keyboardInput(event: KeyboardEvent) {

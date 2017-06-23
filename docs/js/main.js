@@ -1,10 +1,11 @@
 var Balloon = (function () {
     function Balloon(l, g, score) {
-        var _this = this;
         this.speed = 0;
         console.log("New balloon");
         this.div = document.createElement("balloon");
         l.div.appendChild(this.div);
+        this.hitbox = document.createElement("balloonhitbox");
+        this.div.appendChild(this.hitbox);
         this.score = score;
         this.level = l;
         this.game = g;
@@ -15,7 +16,6 @@ var Balloon = (function () {
         this.speed = Math.random() * 1 + 2;
         this.setColor();
         this.update();
-        this.div.addEventListener("click", function (e) { return _this.onClick(e); });
         this.div.addEventListener('keydown', this.keyboardInput);
     }
     Object.defineProperty(Balloon.prototype, "display", {
@@ -30,26 +30,12 @@ var Balloon = (function () {
     });
     Balloon.prototype.update = function () {
         this.x += this.speed;
-        if (this.x > 1300) {
-            this.score.updateScore(0, 0, -1);
-            this.remove();
-        }
-        else {
-            this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
-        }
-    };
-    Balloon.prototype.onClick = function (e) {
-        console.log("This balloon is Popped");
-        this.score.updateScore(1, -1, 0);
-        this.remove();
+        this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
     };
     Balloon.prototype.remove = function () {
-        var _this = this;
         this.div.remove();
-        this.div.removeEventListener("click", function (e) { return _this.onClick(e); });
         this.div.removeEventListener('keydown', this.keyboardInput);
         this.div = undefined;
-        this.level.removeBalloon(this);
     };
     Balloon.prototype.keyboardInput = function (event) {
         if (event.keyCode == 82) {
@@ -78,10 +64,20 @@ window.addEventListener("load", function () {
     new Game();
 });
 var Gun = (function () {
-    function Gun() {
+    function Gun(l, g, ammo) {
+        var _this = this;
+        this.score = ammo;
+        console.log("create new gun");
         this.div = document.createElement("gun");
-        document.body.appendChild(this.div);
+        l.div.appendChild(this.div);
+        this.hitbox = document.createElement("gunhitbox");
+        this.div.appendChild(this.hitbox);
+        this.div.addEventListener("click", function (e) { return _this.onClick(e); });
     }
+    Gun.prototype.onClick = function (e) {
+        this.score.reload();
+        this.score.display();
+    };
     return Gun;
 }());
 var Level = (function () {
@@ -91,8 +87,7 @@ var Level = (function () {
         this.score = new Score();
         this.div = document.createElement("level");
         document.body.appendChild(this.div);
-        this.gun = document.createElement("gun");
-        document.body.appendChild(this.div);
+        this.gun = new Gun(this, this.game, this.score);
         this.create = setInterval(function () { return _this.createBalloon(); }, 1400);
     }
     Object.defineProperty(Level.prototype, "display", {
@@ -118,10 +113,17 @@ var Level = (function () {
                 var b = _a[_i];
                 if (b) {
                     b.update();
-                    if (b.x > 1300) {
+                    if (Util.checkCollision(b.hitbox, this.gun.hitbox)) {
+                        if (this.score.ammo > 0) {
+                            console.log("This balloon hit wall");
+                            this.score.updateScore(1, -1, 0);
+                            this.removeBalloon(b);
+                            break;
+                        }
+                    }
+                    else if (b.x > 1300) {
                         this.score.updateScore(0, 0, -1);
                         this.removeBalloon(b);
-                        b = undefined;
                         break;
                     }
                 }
@@ -132,7 +134,7 @@ var Level = (function () {
         var i = this.balloons.indexOf(b);
         if (i != -1) {
             this.balloons.splice(i, 1);
-            b = undefined;
+            b.remove();
         }
     };
     Level.prototype.removeBalloonAll = function (b) {
@@ -161,10 +163,6 @@ var Score = (function () {
             console.log("This balloon is Popped");
             this.display();
         }
-        else {
-            this.reload();
-            this.display();
-        }
     };
     Score.prototype.display = function () {
         this.scorediv.innerHTML = "SCORE: " + this.score;
@@ -179,6 +177,7 @@ var Score = (function () {
         endscreen.innerHTML = "YOU LOST, TRY AGAIN. PRESS F5";
     };
     Score.prototype.reload = function () {
+        console.log("Reloading...");
         this.ammo = 6;
     };
     return Score;
@@ -188,5 +187,18 @@ var test = (function () {
         console.log("typescript configured");
     }
     return test;
+}());
+var Util = (function () {
+    function Util() {
+    }
+    Util.checkCollision = function (hitbox1, hitbox2) {
+        var rect1 = hitbox1.getBoundingClientRect();
+        var rect2 = hitbox2.getBoundingClientRect();
+        return (rect2.left < rect1.right &&
+            rect2.right > rect1.left &&
+            rect2.top < rect1.bottom &&
+            rect2.bottom > rect1.top);
+    };
+    return Util;
 }());
 //# sourceMappingURL=main.js.map

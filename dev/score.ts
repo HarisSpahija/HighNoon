@@ -39,15 +39,13 @@ constructor() {
             console.log(this.score, this.ammo);
             console.log("This balloon is Popped");
             this.display();
-        } else {
-            this.reload();
-            this.display();
+
         }
         // document.getElementsByTagName("time")[0].innerHTML = "TIME LEFT";
     }
 
 
-private display(){
+public display(){
         // this.timediv.innerHTML = "Score: " + this.time;
         this.scorediv.innerHTML = "SCORE: " + this.score;
         this.ammodiv.innerHTML = "BULLETS LEFT: " + this.ammo;
@@ -66,8 +64,8 @@ private endscreen(){
 
 }
 
-private reload() {
+public reload() {
+    console.log("Reloading...");
     this.ammo = 6;
-    
 }    
 }
