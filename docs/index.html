@@ -6,10 +6,26 @@
 	<link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 <body>
-	<score>SCORE: 0</score>
-	<ammo>BULLETS LEFT: 6</ammo>
-	<lives>LIVES LEFT: 3</lives>
+	<start>
+		<h1>CLICK ANYWHERE TO PLAY</h1>
+		<div class = "inline1"></div>
+		<div class = "inline2"></div>
+		<div class = "inline3"></div>
+		<container>
+		<p>Controls: Left and Right with A and D, space bar for shooting, R for reloading.</p>
+		</br></br></br></br>
+		<p>Pop the balloons and keep the robots alive, the game ends when you run out of lives. Cat is an easter egg</p>
+		</container>
+	</start>
+
+	<score></score>
+	<ammo></ammo>
+	<lives></lives>
 	<script src='js/main.js'></script>
-<!--<canvas id="myCanvas" width="1280" height="720"></canvas>-->
+<!--Sounds-->
+	<audio id="menu" src="sounds/soundtrack.mp3"</audio>
+	<audio id="balloonpop" src="sounds/balloon.mp3"></audio>
+	<audio id="reload" src="sounds/reload.mp3"></audio>
+	<audio id="shoot" src="sounds/shoot.mp3"></audio>
 </body>
 </html>

@@ -1,59 +1,34 @@
-var Balloon = (function () {
-    function Balloon(l, g, score) {
-        this.speed = 0;
-        console.log("New balloon");
-        this.div = document.createElement("balloon");
-        l.div.appendChild(this.div);
-        this.hitbox = document.createElement("balloonhitbox");
-        this.div.appendChild(this.hitbox);
-        this.score = score;
-        this.level = l;
-        this.game = g;
-        this.y = Math.ceil(Math.random() * 500) + 418;
-        this.x = -200;
-        this.width = 200;
-        this.height = 200;
-        this.speed = Math.random() * 1 + 2;
-        this.setColor();
-        this.update();
-        this.div.addEventListener('keydown', this.keyboardInput);
-    }
-    Object.defineProperty(Balloon.prototype, "display", {
-        get: function () {
-            return this.score;
-        },
-        set: function (value) {
-            this.score = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Balloon.prototype.update = function () {
-        this.x += this.speed;
-        this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    Balloon.prototype.remove = function () {
-        this.div.remove();
-        this.div.removeEventListener('keydown', this.keyboardInput);
-        this.div = undefined;
-    };
-    Balloon.prototype.keyboardInput = function (event) {
-        if (event.keyCode == 82) {
-            console.log("R is pressed, reloading...");
-        }
-    };
-    Balloon.prototype.setColor = function () {
-        var color = Math.random() * 360;
-        this.div.style.webkitFilter = "hue-rotate(" + color + "deg)";
-        this.div.style.filter = "hue-rotate(" + color + "deg)";
-    };
-    return Balloon;
-}());
+})();
 var Game = (function () {
     function Game() {
-        this.level = new Level();
-        requestAnimationFrame(this.gameLoop.bind(this));
+        var _this = this;
+        this.startUI = document.getElementsByTagName("start")[0];
+        this.startUI.addEventListener("click", function (e) { return _this.onClick(e); });
+        var menusound = document.getElementById("menu");
+        menusound.volume = 0.2;
+        menusound.play();
+        menusound.loop = true;
     }
+    Game.prototype.onClick = function (e) {
+        this.startUI.remove();
+        this.score = document.createElement("score");
+        this.score.innerHTML = "SCORE: 0";
+        this.ammo = document.createElement("ammo");
+        this.ammo.innerHTML = "BULLETS LEFT: 6";
+        this.lives = document.createElement("lives");
+        this.lives.innerHTML = "LIVES LEFT: 3";
+        requestAnimationFrame(this.gameLoop.bind(this));
+        this.level = new Level();
+    };
     Game.prototype.gameLoop = function () {
         this.level.update();
         requestAnimationFrame(this.gameLoop.bind(this));
@@ -66,29 +41,166 @@ window.addEventListener("load", function () {
 var Gun = (function () {
     function Gun(l, g, ammo) {
         var _this = this;
-        this.score = ammo;
-        console.log("create new gun");
         this.div = document.createElement("gun");
         l.div.appendChild(this.div);
-        this.hitbox = document.createElement("gunhitbox");
-        this.div.appendChild(this.hitbox);
-        this.div.addEventListener("click", function (e) { return _this.onClick(e); });
+        this.score = ammo;
+        this.x = 500;
+        this.y = 0;
+        window.addEventListener("keydown", function (e) { return _this.onKeyDown(e); });
+        this.shoot();
+        this.update();
     }
-    Gun.prototype.onClick = function (e) {
-        this.score.reload();
-        this.score.display();
+    Gun.prototype.update = function () {
+        this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
+    };
+    Gun.prototype.onKeyDown = function (event) {
+        var _this = this;
+        switch (event.keyCode) {
+            case 65:
+                this.x = Math.max(-10, this.x - 30);
+                break;
+            case 68:
+                this.x = Math.min(1100, this.x + 30);
+                break;
+            case 82:
+                this.reloadAnimation();
+                this.reloadSound();
+                setTimeout(function () { return _this.reload(); }, 800);
+                setTimeout(function () { return _this.score.display(); }, 1000);
+                break;
+            case 32:
+                this.shoot();
+                break;
+        }
+    };
+    Gun.prototype.shoot = function () {
+        var _this = this;
+        if (this.score.ammo > 0) {
+            this.hitbox = document.createElement("gunhitbox");
+            this.div.appendChild(this.hitbox);
+            this.shootSound();
+            setTimeout(function () { return _this.removeHitbox(); }, 100);
+            this.score.updateScore(0, -1, 0);
+        }
+    };
+    Gun.prototype.shootSound = function () {
+        var shootsound = document.getElementById("shoot");
+        shootsound.load();
+        shootsound.volume = 0.1;
+        shootsound.play();
+        console.log("shot sound is played");
+    };
+    Gun.prototype.removeHitbox = function () {
+        this.hitbox.remove();
+    };
+    Gun.prototype.reloadSound = function () {
+        var reloadsound = document.getElementById("reload");
+        reloadsound.load();
+        reloadsound.play();
+    };
+    Gun.prototype.reload = function () {
+        this.score.ammo = 6;
+    };
+    Gun.prototype.reloadAnimation = function () {
+        var _this = this;
+        this.reloading = document.createElement("reloading");
+        this.reloading.innerHTML = "RELOADING";
+        this.div.appendChild(this.reloading);
+        this.reloading.style.backgroundImage = "url(images/reload.gif)";
+        setTimeout(function () { return _this.removeAnimation(); }, 1500);
+    };
+    Gun.prototype.removeAnimation = function () {
+        this.reloading.remove();
     };
     return Gun;
 }());
+var Target = (function () {
+    function Target(l, points) {
+        this.speed = 0;
+        this.div = document.createElement("target");
+        l.div.appendChild(this.div);
+        this.level = l;
+        this.score = this.level.score;
+        this.points = points;
+        this.y = Math.ceil(Math.random() * 500) + 418;
+        this.x = -200;
+        this.width = 200;
+        this.height = 200;
+        var multiplier = (this.score.score / 10) + 0.2;
+        this.speed = this.y / 300 * multiplier;
+        this.setColor();
+        this.move();
+    }
+    Object.defineProperty(Target.prototype, "display", {
+        get: function () {
+            return this.score;
+        },
+        set: function (value) {
+            this.score = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Target.prototype.move = function () {
+        this.x += this.speed;
+        this.div.style.transform = "translate(" + this.x + "px, " + this.y + "px)";
+    };
+    Target.prototype.remove = function () {
+        var sound = document.getElementById("balloonpop");
+        sound.volume = 0.2;
+        sound.play();
+        this.div.remove();
+        this.div = undefined;
+    };
+    Target.prototype.setColor = function () {
+        var color = Math.random() * 360;
+        this.div.style.webkitFilter = "hue-rotate(" + color + "deg)";
+        this.div.style.filter = "hue-rotate(" + color + "deg)";
+    };
+    return Target;
+}());
+var Balloon = (function (_super) {
+    __extends(Balloon, _super);
+    function Balloon(l) {
+        var _this = _super.call(this, l, 1) || this;
+        _this.div.classList.add("balloon");
+        _this.hitbox = document.createElement("balloonhitbox");
+        _this.div.appendChild(_this.hitbox);
+        return _this;
+    }
+    return Balloon;
+}(Target));
+var Cat = (function (_super) {
+    __extends(Cat, _super);
+    function Cat(l) {
+        var _this = _super.call(this, l, 0) || this;
+        _this.div.classList.add("cat");
+        _this.hitbox = document.createElement("cathitbox");
+        _this.div.appendChild(_this.hitbox);
+        return _this;
+    }
+    return Cat;
+}(Target));
+var Zenyatta = (function (_super) {
+    __extends(Zenyatta, _super);
+    function Zenyatta(l) {
+        var _this = _super.call(this, l, -1) || this;
+        _this.div.classList.add("zenyatta");
+        _this.hitbox = document.createElement("zenyattahitbox");
+        _this.div.appendChild(_this.hitbox);
+        return _this;
+    }
+    return Zenyatta;
+}(Target));
 var Level = (function () {
     function Level() {
         var _this = this;
-        this.balloons = new Array();
-        this.score = new Score();
+        this.targets = new Array();
         this.div = document.createElement("level");
         document.body.appendChild(this.div);
+        this.score = new Score();
         this.gun = new Gun(this, this.game, this.score);
-        this.create = setInterval(function () { return _this.createBalloon(); }, 1400);
+        this.create = setInterval(function () { return _this.createTarget(); }, 1400);
     }
     Object.defineProperty(Level.prototype, "display", {
         get: function () {
@@ -100,44 +212,55 @@ var Level = (function () {
         enumerable: true,
         configurable: true
     });
-    Level.prototype.createBalloon = function () {
+    Level.prototype.createTarget = function () {
+        this.rand = Math.random();
         if (this.score.lives <= 0) {
             clearInterval(this.create);
         }
-        this.balloons.push(new Balloon(this, this.game, this.score));
-        console.log("Het aantal ballonnen: " + this.balloons.length);
+        if (this.rand < 0.94) {
+            this.targets.push(new Balloon(this));
+            console.log("Balloon push");
+        }
+        else if (this.rand < 0.99) {
+            this.targets.push(new Zenyatta(this));
+            console.log("Zenyatta push");
+        }
+        else {
+            this.targets.push(new Cat(this));
+            console.log("Cat push");
+        }
     };
     Level.prototype.update = function () {
+        this.gun.update();
         if (this.score.lives > 0) {
-            for (var _i = 0, _a = this.balloons; _i < _a.length; _i++) {
-                var b = _a[_i];
-                if (b) {
-                    b.update();
-                    if (Util.checkCollision(b.hitbox, this.gun.hitbox)) {
-                        if (this.score.ammo > 0) {
-                            console.log("This balloon hit wall");
-                            this.score.updateScore(1, -1, 0);
-                            this.removeBalloon(b);
-                            break;
+            for (var _i = 0, _a = this.targets; _i < _a.length; _i++) {
+                var t = _a[_i];
+                if (t) {
+                    t.move();
+                    if (Util.checkCollision(t.hitbox, this.gun.hitbox)) {
+                        if (t.hitbox.tagName == "cathitbox") {
+                            this.score.updateScore(0, 0, -1000);
                         }
+                        this.score.updateScore(t.points, 0, 0);
+                        this.removeTarget(t);
+                        break;
                     }
-                    else if (b.x > 1300) {
-                        this.score.updateScore(0, 0, -1);
-                        this.removeBalloon(b);
+                    else if (t.x > 1300) {
+                        t.points = 0 - t.points;
+                        this.score.updateScore(0, 0, t.points);
+                        this.removeTarget(t);
                         break;
                     }
                 }
             }
         }
     };
-    Level.prototype.removeBalloon = function (b) {
-        var i = this.balloons.indexOf(b);
+    Level.prototype.removeTarget = function (t) {
+        var i = this.targets.indexOf(t);
         if (i != -1) {
-            this.balloons.splice(i, 1);
-            b.remove();
+            this.targets.splice(i, 1);
+            t.remove();
         }
-    };
-    Level.prototype.removeBalloonAll = function (b) {
     };
     return Level;
 }());
@@ -146,7 +269,7 @@ var Score = (function () {
         this.ammodiv = document.getElementsByTagName("ammo")[0];
         this.scorediv = document.getElementsByTagName("score")[0];
         this.livesdiv = document.getElementsByTagName("lives")[0];
-        this.ammo = 6;
+        this.ammo = 7;
         this.score = 0;
         this.lives = 3;
     }
@@ -155,14 +278,9 @@ var Score = (function () {
         if (this.lives == 0) {
             this.endscreen();
         }
-        if (this.ammo > 0) {
-            console.log(this.score, this.ammo);
-            this.score += score;
-            this.ammo += ammo;
-            console.log(this.score, this.ammo);
-            console.log("This balloon is Popped");
-            this.display();
-        }
+        this.score += score;
+        this.ammo += ammo;
+        this.display();
     };
     Score.prototype.display = function () {
         this.scorediv.innerHTML = "SCORE: " + this.score;
@@ -172,21 +290,12 @@ var Score = (function () {
     Score.prototype.endscreen = function () {
         this.ammodiv.remove();
         this.livesdiv.remove();
+        this.scorediv.remove();
         var endscreen = document.createElement("endscreen");
         document.body.appendChild(endscreen);
-        endscreen.innerHTML = "YOU LOST, TRY AGAIN. PRESS F5";
-    };
-    Score.prototype.reload = function () {
-        console.log("Reloading...");
-        this.ammo = 6;
+        endscreen.innerHTML = "GAME OVER, YOUR SCORE WAS: " + this.score;
     };
     return Score;
-}());
-var test = (function () {
-    function test() {
-        console.log("typescript configured");
-    }
-    return test;
 }());
 var Util = (function () {
     function Util() {

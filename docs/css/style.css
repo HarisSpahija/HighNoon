@@ -1,11 +1,14 @@
 @font-face {
-    font-family: LostSaloon;
-    src: url('../font/LostSaloon.ttf');
+    font-family: bit font;
+    src: url('../font/8-BIT WONDER.ttf');
 }
 
 html, body {
     /*background-color: #70CF51;*/
-    font-family: LostSaloon;
+    font-family: bit font;
+    font-size: 20px;
+    color: #FFF39E;
+    text-shadow: -7px 0 #8E4E04, 0 7px #8E4E04, 7px 0 #8E4E04, 0 -7px #8E4E04;
     overflow:hidden;
     margin:0px; padding:0px;
     background-image: url('../images/background3.jpg');
@@ -22,6 +25,57 @@ body * {
 }
 
 
+start {
+    left:calc(44% - 497px);
+    top:calc(50% - 418px);
+    width:1280px; height:720px;
+    background-image: url('../images/background.jpg');
+    background-color: black;
+    border-radius: 10px;
+    overflow: hidden;
+    border:3px solid #654321;
+    box-shadow: 12px 12px 0px rgba(0, 0, 0, 0.5);
+}
+h1 {
+    top: calc(46%);
+    left: calc(20%)
+}
+
+container {
+    text-shadow: -2px 0 #8E4E04, 0 2px #8E4E04, 2px 0 #8E4E04, 0 -2px #8E4E04;
+    width: 800px;
+    height: 600px;
+    top: calc(78%);
+    left: calc(20%);
+
+}
+.inline1 {
+    background-size: cover;
+    background-image: url('../images/balloon.gif');
+    display: inline-block;
+    width: 213px;
+    height: 143px;
+    top: calc(55%);
+    left: calc(20%);
+}
+.inline2 {
+    background-size: cover;
+    background-image: url('../images/zenyatta.gif');
+    display: inline-block;
+    width: 213px;
+    height: 189px;
+    top: calc(55%);
+    left: calc(43%);
+}
+.inline3 {
+    background-size: cover;
+    background-image: url('../images/cat.gif');
+    display: inline-block;
+    width: 213px;
+    height: 178px;
+    top: calc(51%);
+    left: calc(70%);
+}
 score {
     top:calc(50% - 418px);
     left:calc(50% - 497px);
@@ -33,7 +87,7 @@ score {
 ammo {
     top:calc(50% - 418px);
     left:calc(50% - 497px);
-    top:calc(73%);
+    top:calc(70%);
     width:1280px; height:60px;
     z-index: 100;
 }
@@ -41,14 +95,14 @@ ammo {
 lives {
     top:calc(50% - 418px);
     left:calc(50% - 497px);
-    top:calc(78%);
+    top:calc(73%);
     width:1280px; height:60px;
     z-index: 100;
 }
 
 level {
     left:calc(44% - 497px);
-    top:calc(50% - 418px);
+    top:calc(51% - 418px);
     width:1280px; height:720px;
     background-image: url('../images/background2.jpg');
     background-color: black;
@@ -59,11 +113,11 @@ level {
 }
 
 endscreen {
-    top:calc(50% - 418px);
-    left:calc(50% - 497px);
-    top:calc(78%);
+    top: calc(27%);
+    left: calc(38%);
     width:1280px; height:60px;
     z-index: 100;
+    
 }
 
 time {
@@ -73,33 +127,66 @@ time {
 }
 
 
-balloon {
+.balloon {
     background-image: url('../images/balloon.gif');
     background-size: cover;
     left: 30px; top: -400px;
     width:200px; height:200px;
     /*animation: balloonup 3s linear infinite;*/
 }
-
 balloonhitbox {
-    border:2px solid blue;
+    left: 59px;
+    top: 17px;
+    height: 80px; width: 80px;
+}
+.zenyatta {
+    background-image: url('../images/zenyatta.gif');
+    background-size: cover;
+    left: 30px; top: -400px;
+    width:200px; height:200px;
+    /*animation: balloonup 3s linear infinite;*/
+}
+zenyattahitbox {
+    left: 59px;
+    top: 17px;
+    height: 80px; width: 80px;
+}
+
+.cat {
+    background-image: url('../images/cat.gif');
+    background-size: cover;
+    left: 30px; top: -400px;
+    width:200px; height:200px;
+    /*animation: balloonup 3s linear infinite;*/
+}
+cathitbox {
     left: 59px;
     top: 17px;
     height: 80px; width: 80px;
 }
 
 gun {
-    background-image: url('../images/gunshoot.gif');
+    background-image: url('../images/pistol_frame_0.png');
     background-size:cover;
-    
     width:200px; height:200px;
     top: calc(75%);
-    left: 500px;
+    z-index: initial;
 }
 
 gunhitbox {
-    border:2px solid red;
+    background-image: url('../images/trace.png');
+    background-size: 120px 575px;
     left: 30px;
     height:800px; width:120px;
     margin-top:-500px;
+    z-index: -1;
+}
+
+reloading {
+    color: white;
+    text-shadow: 2px 2px #ff0000;
+    background-size: cover;
+    left: 40px;
+    top: 70px;
+    height: 100px; width: 100px;
 }

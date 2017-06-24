@@ -1,15 +1,16 @@
-/// <reference path="balloon.ts"/>
+/// <reference path="target.ts"/>
 
 class Level {
     private game:Game;
-    private gun: Gun;
-    private score:Score;
+    private gun:Gun;
+    public score:Score;
     private ammo:Score;
+    private rand:number;
+
+    public private: number;
     
     public div: HTMLElement;
     public create: number;
-
-
 
     public get display(): Score {
         return this.score;
@@ -17,47 +18,64 @@ class Level {
     public set display(value: Score) {
         this.score = value;
     }
-
-    private balloons: Array<Balloon> = new Array<Balloon>();
+    //array for targets
+    private targets: Array<Target> = new Array<Target>();
     
     constructor() {
-        this.score = new Score();
-        
+        //Level div gets created
         this.div = document.createElement("level");
         document.body.appendChild(this.div);
-        
+
+        //Classes for level are created (score and gun)
+        this.score = new Score();
         this.gun = new Gun(this, this.game, this.score);
 
-        this.create = setInterval(()=> this.createBalloon(), 1400);  
-        
+        //New target created
+        this.create = setInterval(()=> this.createTarget(), 1400);  
     }
-
-    private createBalloon(): void{
+    
+    //Creates array and pushes new targets
+    private createTarget(): void{
+        this.rand = Math.random();
+        //checks if the player is still able to play
         if(this.score.lives <= 0) {
             clearInterval(this.create);
         }
-        this.balloons.push(new Balloon(this,this.game, this.score));
-        console.log("Het aantal ballonnen: " + this.balloons.length);
-        
+        //randomizer selects next target
+        if(this.rand < 0.94) {
+            this.targets.push(new Balloon(this));
+            console.log("Balloon push");
+        } else if(this.rand < 0.99) {
+            this.targets.push(new Zenyatta(this));
+            console.log("Zenyatta push");
+        } else {
+            this.targets.push(new Cat(this));
+            console.log("Cat push");
+        }
     }
 
+    //Updates the game
     public update() : void {
+
+        this.gun.update();
         if(this.score.lives > 0) {
-            //balloons
-            for(let b of this.balloons){
-                if(b){
-                    b.update();
-                    if(Util.checkCollision(b.hitbox, this.gun.hitbox)){
-                        if (this.score.ammo > 0) {
-                            console.log("This balloon hit wall");
-                            this.score.updateScore(1, -1, 0);
-                            this.removeBalloon(b);
-                            break;
+            //targets forloop
+            for(let t of this.targets){
+                if(t){
+                    t.move();
+                    //check if there is collision between bullet and target
+                    if(Util.checkCollision(t.hitbox, this.gun.hitbox)){
+                        if(t.hitbox.tagName == "cathitbox"){
+                            this.score.updateScore(0, 0, -1000);
                         }
+                            this.score.updateScore(t.points, 0, 0);
+                            this.removeTarget(t);
+                            break;
                     }
-                    else if (b.x > 1300) {
-                    this.score.updateScore(0, 0, -1);   
-                    this.removeBalloon(b);
+                    else if (t.x > 1300) {
+                    t.points = 0-t.points;
+                    this.score.updateScore(0, 0, t.points);   
+                    this.removeTarget(t);
                     break;
                     }
                 }
@@ -66,18 +84,12 @@ class Level {
 
     }
   
-
-
-    public removeBalloon(b:Balloon){
-        let i:number = this.balloons.indexOf(b);
+    public removeTarget(t:Target){
+        let i:number = this.targets.indexOf(t);
         if(i != -1) {
-            this.balloons.splice(i, 1);
-            b.remove();
+            this.targets.splice(i, 1);
+            t.remove();
         }
     }
 
-    public removeBalloonAll(b:Balloon){
-
-        //Remove all entities
-    }
 }

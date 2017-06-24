@@ -15,57 +15,44 @@ class Score{
     private game:Game;
     private level: Level;
 
-constructor() {
+    constructor() {
+        //gets elements from the HTML code
+        this.ammodiv = document.getElementsByTagName("ammo")[0];
+        this.scorediv = document.getElementsByTagName("score")[0];
+        this.livesdiv = document.getElementsByTagName("lives")[0];
 
-    this.ammodiv = document.getElementsByTagName("ammo")[0];
-    this.scorediv = document.getElementsByTagName("score")[0];
-    this.livesdiv = document.getElementsByTagName("lives")[0];
-
-    this.ammo = 6;
-    this.score = 0;
-    this.lives = 3;
-
-    // this.timediv = document.getElementsByTagName("time")[0];
-}
+        this.ammo = 7;
+        this.score = 0;
+        this.lives = 3;
+    }
+    //updates the score UI
     public updateScore(score:number, ammo:number, lives:number){
         this.lives += lives;
+        //checks if player lost
         if(this.lives == 0) {
             this.endscreen();
         }
-        if(this.ammo > 0) {
-            console.log(this.score, this.ammo);
             this.score += score;
             this.ammo += ammo;
-            console.log(this.score, this.ammo);
-            console.log("This balloon is Popped");
-            this.display();
-
-        }
-        // document.getElementsByTagName("time")[0].innerHTML = "TIME LEFT";
+            this.display();        
     }
 
-
-public display(){
-        // this.timediv.innerHTML = "Score: " + this.time;
+    //displays the updated UI
+    public display(){
         this.scorediv.innerHTML = "SCORE: " + this.score;
         this.ammodiv.innerHTML = "BULLETS LEFT: " + this.ammo;
         this.livesdiv.innerHTML = "LIVES LEFT: " + this.lives;
     }
 
-private endscreen(){
+    //endscreen, removes the UI and posts endscreen message
+    private endscreen(){
+        this.ammodiv.remove();
+        this.livesdiv.remove();
+        this.scorediv.remove();
     
-    this.ammodiv.remove();
-    this.livesdiv.remove();
-
-    let endscreen = document.createElement("endscreen")
-    document.body.appendChild(endscreen);
-    endscreen.innerHTML = "YOU LOST, TRY AGAIN. PRESS F5";
-    
-
-}
-
-public reload() {
-    console.log("Reloading...");
-    this.ammo = 6;
-}    
+        //endscreen message
+        let endscreen = document.createElement("endscreen")
+        document.body.appendChild(endscreen);
+        endscreen.innerHTML = "GAME OVER, YOUR SCORE WAS: " + this.score;
+    }
 }
