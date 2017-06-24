@@ -1,11 +1,11 @@
 @font-face {
-    font-family: bit font;
+    font-family: bitfont;
     src: url('../font/bit.ttf');
 }
 
 html, body {
     /*background-color: #70CF51;*/
-    font-family: bit font;
+    font-family: bitfont;
     font-size: 20px;
     color: #FFF39E;
     text-shadow: -7px 0 #8E4E04, 0 7px #8E4E04, 7px 0 #8E4E04, 0 -7px #8E4E04;
