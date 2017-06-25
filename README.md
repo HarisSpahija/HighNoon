@@ -1,14 +1,19 @@
 <h1># High Noon</h1>
 
-Join Mccree in his training in the wild west. You play as a lonely cowboy that needs to shoot the balloons in order to practise his aim. His teacher is sometimes getting in the way so dont shoot him!
+Join Mccree in his training in the wild west. You play as a lonely cowboy that needs to shoot the balloons in order to practise his aim. His teacher is sometimes getting in the way so dont shoot him! The Game ends when you run out of lives!
 
-<h2><a href="https://harisspahija.github.io/HighNoon/">Click here to play!</a></h2><br>
-
+<h2><a href="https://harisspahija.github.io/HighNoon/">Click here to play!</a></h2>
 <h2>How to play</h2>
 A = Move the gun Left<br>
 D = Move the gun right<br>
 Spacebar = Shoot<br>
 R = Reload<br>
+<img src="docs/images/balloon.gif">
+Shoot the balloons to gain score!
+<img src="docs/images/zenyatta.gif">
+Do not shoot Mccree his teacher!
+<img src="docs/images/cat.gif">
+This cat does nothing, its just there to distract you... Stupid cat...
 
 <h2>High Score</h2>
 Gert https://github.com/GJeeh - 165<br>
